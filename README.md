@@ -61,18 +61,20 @@ Bu proje, **gerçek zamanlı deprem verilerini** işleyerek, belirli bir büyük
 
 ```mermaid
 graph TD
-  A[Kandilli API] --> B[Data Fetcher (Thread)]
-  B --> C[Flask App (app.py)]
-  C --> D[WebSocket Server]
-  C --> E[Prediction Logic (main.py)]
-  E --> F[ML Models (.pkl)]
-  E --> G[Firebase Admin SDK]
-  D --> H[React Native Mobil Uygulama]
-  G --> I[Firebase Cloud Messaging]
-  I --> J[FCM Listener]
-  H --> K[WebSocket Client]
-  H --> L[API Client]
-  H --> M[Local Storage (AsyncStorage)]
+    A[Kandilli API] --> B[Data Fetcher Thread]
+    B --> C[Flask App]
+    C --> D[WebSocket Server]
+    C --> E[Prediction Logic]
+    E --> F[ML Models]
+    C --> G[Firebase Admin SDK]
+    G --> H[FCM Service]
+
+    D --> I[React Native App]
+    H --> J[FCM Listener]
+
+    I --> K[WebSocket Client]
+    I --> L[API Client]
+    I --> M[Local Storage]
 ```
 
 ---
