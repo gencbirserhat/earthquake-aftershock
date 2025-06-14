@@ -1,117 +1,217 @@
-Deprem ve Artçı Şok Tahmin Sistemi
-Bu proje, gerçek zamanlı deprem verilerini işleyerek, belirli bir büyüklüğün üzerindeki ana şoklar için potansiyel artçı şokların büyüklüğünü ve zamanını tahmin eden bütünleşik bir sistemdir. Sistem, bir Flask arka uç servisinden, makine öğrenmesi modellerinden ve bir React Native mobil uygulamasından oluşur.
 
-🚀 Projenin Özellikleri
-Gerçek Zamanlı Veri Akışı: Kandilli Rasathanesi verilerini anlık olarak takip eder ve yeni depremleri saniyeler içinde işler.
-Yapay Zeka Destekli Tahmin: LightGBM kullanılarak eğitilmiş makine öğrenmesi modelleri ile 5.5 ve üzeri büyüklükteki depremlerin potansiyel artçı şoklarını tahmin eder.
-WebSocket İletişimi: Flask-SocketIO ile sunucu ve istemci arasında düşük gecikmeli, anlık veri akışı sağlar.
-RESTful API: Model tahminlerini ve durumunu sunan, Flasgger ile belgelendirilmiş bir Flask API'si.
-Platform Bağımsız Mobil Uygulama: React Native ile geliştirilmiş, hem iOS hem de Android'de çalışan, kullanıcı dostu bir mobil arayüz.
-Anlık Bildirimler: Firebase Cloud Messaging (FCM) entegrasyonu ile kritik deprem ve tahmin bilgilerini mobil kullanıcılara anlık olarak iletir.
-🛠️ Teknolojiler ve Mimarisi
-Proje üç ana bileşenden oluşur:
-Arka Uç (Backend) - app.py
-Flask: Ana web framework.
-Flask-SocketIO: Gerçek zamanlı WebSocket iletişimi için.
-Firebase Admin SDK: Anlık mobil bildirimler göndermek için.
-Requests: Üçüncü parti deprem API'lerinden veri çekmek için.
-Flasgger: API dokümantasyonu oluşturmak için.
-Veri Bilimi ve Makine Öğrenmesi - main.py, lgbm_first_aftershock-predict.ipynb
-Pandas & NumPy: Veri işleme ve analizi.
-Scikit-learn: Model eğitimi ve değerlendirmesi için.
-LightGBM: Artçı şok büyüklüğü ve zamanını tahmin eden ana model.
-Joblib: Eğitilmiş modelleri kaydetmek ve yüklemek için.
-Matplotlib: Keşifçi veri analizi ve görselleştirme için.
-Ön Uç (Frontend) - Mobil Uygulama
-React Native: Platform bağımsız mobil uygulama geliştirme.
-Socket.IO Client: Arka uç ile gerçek zamanlı bağlantı.
-React Native Firebase: FCM bildirimlerini almak ve yönetmek için.
-AsyncStorage: Verileri cihazda yerel olarak saklamak için.
-🏛️ Sistem Mimarisi
+# 🌍 Deprem ve Artçı Şok Tahmin Sistemi
 
-Bir arka plan görevi (thread), periyodik olarak (örn. 15 saniyede bir) Kandilli API'sinden en son deprem verilerini çeker.
-Yeni ve büyük (>5.5) bir deprem tespit edildiğinde, bu bilgi eğitilmiş LightGBM modeline gönderilir.
-Model, artçı şok büyüklüğü ve zamanı için bir tahmin üretir.
-Yeni deprem ve (varsa) tahmin sonucu, WebSocket üzerinden tüm bağlı mobil istemcilere anlık olarak gönderilir.
-Aynı zamanda, Firebase Cloud Messaging (FCM) aracılığıyla kayıtlı tüm mobil cihazlara bir uyarı bildirimi gönderilir.
-Mobil uygulama, bu verileri alır ve kullanıcı arayüzünü günceller.
-🏁 Projeyi Yerel Makinede Çalıştırma
-Projeyi kendi makinenizde çalıştırmak için aşağıdaki adımları izleyin.
-📋 Ön Gereksinimler
-Python 3.8+
-Node.js 16+ ve npm
-React Native geliştirme ortamı kurulumu (Resmi Kılavuz)
-Bir Firebase projesi ve serviceAccountKey.json dosyası.
-⚙️ 1. Arka Ucu Kurma ve Çalıştırma
-Depoyu klonlayın:
+Bu proje, **gerçek zamanlı deprem verilerini** işleyerek, belirli bir büyüklüğün üzerindeki depremler için potansiyel **artçı şokların büyüklüğünü ve zamanını tahmin eden** bütünleşik bir sistemdir.
+
+🔧 Sistem; Flask tabanlı bir arka uç servis, makine öğrenmesi modelleri ve React Native mobil uygulamasından oluşur.
+
+---
+
+## 🚀 Özellikler
+
+- **📡 Gerçek Zamanlı Veri Akışı**  
+  Kandilli Rasathanesi verilerini takip eder ve yeni depremleri saniyeler içinde işler.
+
+- **🤖 Yapay Zeka Destekli Tahmin**  
+  5.5 ve üzeri büyüklükteki depremler için LightGBM ile artçı şok tahmini yapar.
+
+- **🔌 WebSocket İletişimi**  
+  Flask-SocketIO ile istemcilere anlık veri iletimi sağlar.
+
+- **📡 RESTful API + Swagger**  
+  Model tahminleri ve sistem durumu için belgelenmiş API'ler sunar.
+
+- **📱 Platform Bağımsız Mobil Uygulama**  
+  iOS ve Android destekli, React Native ile geliştirilmiş mobil arayüz.
+
+- **🔔 Anlık Bildirimler (FCM)**  
+  Kritik bilgiler Firebase Cloud Messaging ile kullanıcılara iletilir.
+
+---
+
+## 🏗️ Mimaride Kullanılan Teknolojiler
+
+### 🔙 Backend (Flask)
+
+- Flask
+- Flask-SocketIO
+- Firebase Admin SDK
+- Requests
+- Flasgger
+
+### 📊 Veri Bilimi & ML
+
+- Pandas
+- NumPy
+- Scikit-learn
+- LightGBM
+- Joblib
+- Matplotlib
+
+### 📱 Frontend (Mobil)
+
+- React Native
+- Socket.IO Client
+- AsyncStorage
+- React Native Firebase
+
+---
+
+## 🏛️ Sistem Mimarisi
+
+```mermaid
+graph TD
+  A[Kandilli API] --> B[Data Fetcher (Thread)]
+  B --> C[Flask App (app.py)]
+  C --> D[WebSocket Server]
+  C --> E[Prediction Logic (main.py)]
+  E --> F[ML Models (.pkl)]
+  E --> G[Firebase Admin SDK]
+  D --> H[React Native Mobil Uygulama]
+  G --> I[Firebase Cloud Messaging]
+  I --> J[FCM Listener]
+  H --> K[WebSocket Client]
+  H --> L[API Client]
+  H --> M[Local Storage (AsyncStorage)]
+```
+
+---
+
+## ⚙️ Kurulum
+
+### 📋 Gereksinimler
+
+- Python 3.8+
+- Node.js 16+ & npm
+- React Native geliştirme ortamı
+- Firebase projesi & `serviceAccountKey.json`
+
+---
+
+## 1️⃣ Arka Uç (Backend) Kurulumu
+
+```bash
 git clone https://github.com/gencbirserhat/earthquake-aftershock.git
-cd deprem-tahmin-projesi/backend # veya kök dizin
-Use code with caution.
-Bash
-Gerekli Python paketlerini yükleyin:
+cd earthquake-aftershock/backend
 pip install -r requirements.txt
-Use code with caution.
-Bash
-Firebase Kurulumu:
-Firebase projenizden oluşturduğunuz servis anahtarı dosyasını indirin.
-Dosyanın adını earthquake-aftershock-firebase-adminsdk-fbsvc-703a825086.json olarak değiştirin ve app.py ile aynı dizine koyun.
-Model Dosyaları:
-models/ klasörünün içinde lgbm_mag_pipeline.pkl ve lgbm_time_pipeline.pkl dosyalarının bulunduğundan emin olun. Bu modelleri lgbm_first_aftershock-predict.ipynb not defterini çalıştırarak üretebilirsiniz.
-Sunucuyu başlatın:
+```
+
+### 🔐 Firebase Ayarları
+
+- Firebase servis hesabını indir.
+- Adını: `earthquake-aftershock-firebase-adminsdk.json` olarak değiştir.
+- `app.py` ile aynı dizine koy.
+
+### 📦 Model Dosyaları
+
+- `models/` klasöründe şu dosyalar olmalı:
+  - `lgbm_mag_pipeline.pkl`
+  - `lgbm_time_pipeline.pkl`
+
+> Model yoksa `veri-analizi/lgbm_first_aftershock-predict.ipynb` dosyasını çalıştırarak oluştur.
+
+### 🚀 Sunucuyu Başlat
+
+```bash
 python app.py
-Use code with caution.
-Bash
-Sunucu varsayılan olarak http://0.0.0.0:5000 adresinde çalışmaya başlayacaktır.
-📱 2. Mobil Uygulamayı Kurma ve Çalıştırma
-Mobil uygulama dizinine gidin:
-cd ../mobil-uygulama # veya ilgili dizin
-Use code with caution.
-Bash
-Gerekli npm paketlerini yükleyin:
+# Sunucu http://0.0.0.0:5000 üzerinde çalışacaktır.
+```
+
+---
+
+## 2️⃣ Mobil Uygulama Kurulumu
+
+```bash
+cd ../mobil-uygulama
 npm install
-Use code with caution.
-Bash
-Firebase Kurulumu:
-React Native Firebase dokümantasyonunu takip ederek google-services.json (Android) ve GoogleService-Info.plist (iOS) dosyalarını projenize ekleyin.
-IP Adresini Güncelleyin:
-App.tsx ve diğer servis dosyalarındaki FLASK_API_URL değişkenini, arka uç sunucunuzun yerel ağdaki IP adresi ile güncelleyin. Örneğin: http://192.168.1.10:5000.
-Uygulamayı başlatın (Android):
+```
+
+### 🔐 Firebase
+
+- Android: `google-services.json`
+- iOS: `GoogleService-Info.plist`
+
+> [React Native Firebase Kurulumu](https://rnfirebase.io/) kılavuzuna bak.
+
+### 🌐 IP Güncellemesi
+
+`App.tsx` ve servis dosyalarında:
+
+```ts
+const FLASK_API_URL = "http://<local-ip>:5000";
+```
+
+### ▶️ Uygulamayı Çalıştır
+
+#### Android:
+
+```bash
 npx react-native run-android
-Use code with caution.
-Bash
-Uygulamayı başlatın (iOS):
+```
+
+#### iOS:
+
+```bash
 cd ios && pod install && cd ..
 npx react-native run-ios
-Use code with caution.
-Bash
-📂 Proje Dosya Yapısı
+```
+
+---
+
+## 📂 Proje Yapısı
+
+```
 .
-├── backend/                  # Arka uç ve model dosyaları
-│   ├── app.py                # Flask sunucusu
-│   ├── main.py               # Model tahmin fonksiyonları
-│   ├── requirements.txt      # Python bağımlılıkları
-│   ├── models/               # Eğitilmiş .pkl modelleri
+├── backend/
+│   ├── app.py
+│   ├── main.py
+│   ├── requirements.txt
+│   ├── models/
 │   │   ├── lgbm_mag_pipeline.pkl
 │   │   └── lgbm_time_pipeline.pkl
-│   └── earthquake-aftershock-firebase-adminsdk.json # Firebase anahtarı
+│   └── earthquake-aftershock-firebase-adminsdk.json
 │
-├── mobil-uygulama/           # React Native mobil uygulaması
+├── mobil-uygulama/
 │   ├── src/
-│   │   ├── components/       # React bileşenleri (Liste, Modal vb.)
-│   │   └── services/         # Servisler (WebSocket, Firebase)
-│   ├── App.tsx               # Ana uygulama bileşeni
+│   │   ├── components/
+│   │   └── services/
+│   ├── App.tsx
 │   └── ...
 │
-├── veri-analizi/             # Veri bilimi not defterleri
-│   ├── lgbm_first_aftershock-predict.ipynb  # Model eğitim not defteri
-│   └── main copy.ipynb       # Keşifçi veri analizi ve görselleştirme
+├── veri-analizi/
+│   ├── lgbm_first_aftershock-predict.ipynb
+│   └── main copy.ipynb
 │
-└── README.md                 # Bu dosya
-Use code with caution.
-🎯 Gelecek Geliştirmeler ve Katkı
-Bu proje sürekli geliştirilmeye açıktır. Gelecek için planlanan bazı adımlar:
-Daha Gelişmiş Modeller: LSTM veya Transformer gibi derin öğrenme modellerini denemek.
-Özellik Mühendisliği: Fay hatlarına uzaklık, zemin türü gibi daha fazla jeolojik özelliği modele dahil etmek.
-İnteraktif Harita: Mobil uygulamaya depremleri ve tahminleri gösteren interaktif bir harita eklemek.
-Bulut Dağıtımı: Projeyi Docker ve Kubernetes kullanarak bir bulut platformuna (AWS, GCP) taşımak.
-Katkıda bulunmak isterseniz, lütfen bir "issue" açın veya bir "pull request" gönderin. Tüm katkılar memnuniyetle karşılanır!
+└── README.md
+```
+
+---
+
+## 🎯 Gelecek Geliştirmeler
+
+- 🌐 Harita üzerinde canlı deprem gösterimi
+- 📊 Tahmin sonuçlarının geçmişe dönük analizi
+- 🔒 Kullanıcı kimlik doğrulama ve kayıt sistemi
+- 🌍 Global deprem kaynaklarının desteklenmesi
+
+---
+
+## 🤝 Katkı Sağla
+
+Projeye katkıda bulunmak istersen:
+
+1. Fork'la 🍴  
+2. Branch oluştur (`feature/yenilik`) 🌿  
+3. Değişikliklerini yap ✏️  
+4. Pull request gönder 🚀  
+
+---
+
+## 📜 Lisans
+
+Bu proje MIT lisansı ile lisanslanmıştır.
+
+---
+
+> Hazırlayan: **Serhat Genç**  
+> GitHub: [gencbirserhat](https://github.com/gencbirserhat)
