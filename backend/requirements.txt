@@ -1,0 +1,14 @@
+flask
+flask-socketio
+flasgger
+firebase-admin
+requests
+pandas
+numpy
+scikit-learn
+lightgbm
+joblib
+matplotlib
+haversine
+notebook
+jupyter
